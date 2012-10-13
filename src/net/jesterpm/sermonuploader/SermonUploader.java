@@ -4,6 +4,12 @@
 
 package net.jesterpm.sermonuploader;
 
+import net.jesterpm.sermonuploader.config.Config;
+import net.jesterpm.sermonuploader.control.ConfigureTask;
+import net.jesterpm.sermonuploader.control.UploadTask;
+import net.jesterpm.sermonuploader.ui.ConfigurationWindow;
+import net.jesterpm.sermonuploader.ui.ProgressWindow;
+
 /**
  * Application entry-point.
  *
@@ -35,9 +41,10 @@ public class SermonUploader {
         System.out.println();
         System.out.println("Usage: SermonUploader [directory]");
         System.out.println(
-                "\tWhen started with no arguments, the configuration dialog is opened.");
-        System.out.println("\tWhen started with one argument, it is assumed to "
-                + "be a directory with a metadata.txt file with upload instructions."); 
+                "When started with no arguments, the configuration dialog is opened.");
+        System.out.println(
+                "When started with one argument, it is assumed to be a directory\n"
+                + "with a metadata.txt file with upload instructions."); 
         System.out.println();
     }
 

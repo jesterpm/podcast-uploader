@@ -4,6 +4,9 @@
 
 package net.jesterpm.sermonuploader.config;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * Configuration and metadata parser.
  *
@@ -18,6 +21,7 @@ public class Config {
      */
     public Config(final String filename) {
         mFilename = filename;
+        mConfig = new HashMap<String, String>();
         parse();
     }
 
@@ -33,7 +37,7 @@ public class Config {
         return mConfig.get(key);
     }
 
-    public String put(final String key, final String obj) {
+    public void put(final String key, final String obj) {
         mConfig.put(key, obj);
     }
 }

@@ -22,23 +22,28 @@ public class ConfigureTask {
         mAppConfig = appconfig;
         mWin = win;
 
-        mWin.setSaveAction(new Action() {
+        mWin.addSaveAction(new Action() {
             public void onAction() {
                 populateConfig();
                 mAppConfig.save();
                 mWin.setVisible(false);
-            });
+                System.exit(0);
+            }
+        });
 
-        mWin.setCancelAction(new Action() {
+        mWin.addCancelAction(new Action() {
             public void onAction() {
                 mWin.setVisible(false);
-            });
+                System.exit(0);
+            }
+        });
 
-        mWin.setAuthorizeAction(new Action() {
+        mWin.addAuthorizeAction(new Action() {
             public void onAction() {
                 populateConfig();
                 getAuthorization();
-            });
+            }
+        });
 
         populateWindow();
     }  
@@ -47,21 +52,21 @@ public class ConfigureTask {
      * Set the fields in the configuration window.
      */
     private void populateWindow() {
-        mWin.setAWSKey(Config.get("AWSAccessKeyId"));
-        mWin.setAWSSecret(Config.get("AWSSecretKey"));
-        mWin.setS3Bucket(Config.get("S3Bucket"));
-        mWin.setMetadataServer(Config.get("MetadataURL"));
-        mWin.setHasAuthKey(Config.get("MetadataAuthKey") != null);
+        mWin.setAWSKey(mAppConfig.get("AWSAccessKeyId"));
+        mWin.setAWSSecret(mAppConfig.get("AWSSecretKey"));
+        mWin.setS3Bucket(mAppConfig.get("S3Bucket"));
+        mWin.setMetadataServer(mAppConfig.get("MetadataURL"));
+        mWin.setHasAuthKey(mAppConfig.get("MetadataAuthKey") != null);
     }
 
     /**
      * Populate the config from the window.
      */
     private void populateConfig() {
-        Config.put("AWSAccessKeyId", mWin.getAWSKey());
-        Config.put("AWSSecretKey", mWin.getAWSSecret());
-        Config.put("S3Bucket", mWin.getS3Bucket());
-        Config.put("MetadataURL", mWin.getMetadataServer());
+        mAppConfig.put("AWSAccessKeyId", mWin.getAWSKey());
+        mAppConfig.put("AWSSecretKey", mWin.getAWSSecret());
+        mAppConfig.put("S3Bucket", mWin.getS3Bucket());
+        mAppConfig.put("MetadataURL", mWin.getMetadataServer());
     }
 
     /**
