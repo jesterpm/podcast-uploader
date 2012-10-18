@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="SermonUploader" default="build" basedir=".">
+<project name="PodcastUploader" default="build" basedir=".">
   <path id="project.class.path">
     <fileset dir="lib" includes="**/*.jar"/>
   </path>
@@ -20,7 +20,7 @@
   <target name="build" depends="javac" description="Build this project" />
 
   <target name="jar" depends="build" description="Create a jar file">
-    <jar destfile="SermonUploader.jar">
+    <jar destfile="PodcastUploader.jar">
        <fileset dir="build" />
        <restrict>
           <archives>
@@ -30,13 +30,14 @@
          </archives>
        </restrict>
        <manifest>
-          <attribute name="Main-Class" value="net.jesterpm.sermonuploader.SermonUploader" />
+          <attribute name="Main-Class" value="net.jesterpm.podcastuploader.PodcastUploader" />
        </manifest>
     </jar>
   </target>
 
   <target name="clean" description="Cleans this project">
     <delete dir="build" failonerror="false" />
+    <delete file="PodcastUploader.jar" failonerror="false" />
   </target>
 
 </project>

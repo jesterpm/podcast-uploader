@@ -2,7 +2,7 @@
  * Copyright 2012 Jesse Morgan
  */
 
-package net.jesterpm.sermonuploader.ui;
+package net.jesterpm.podcastuploader.ui;
 
 /**
  * Action handler for the UI.

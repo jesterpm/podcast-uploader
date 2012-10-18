@@ -2,10 +2,10 @@
  * Copyright 2012 Jesse Morgan
  */
 
-package net.jesterpm.sermonuploader.control;
+package net.jesterpm.podcastuploader.control;
 
-import net.jesterpm.sermonuploader.config.Config;
-import net.jesterpm.sermonuploader.ui.ProgressWindow;
+import net.jesterpm.podcastuploader.config.Config;
+import net.jesterpm.podcastuploader.ui.ProgressWindow;
 
 /**
  * 

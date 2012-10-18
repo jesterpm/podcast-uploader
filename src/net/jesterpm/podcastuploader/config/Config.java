@@ -2,7 +2,7 @@
  * Copyright 2012 Jesse Morgan
  */
 
-package net.jesterpm.sermonuploader.config;
+package net.jesterpm.podcastuploader.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

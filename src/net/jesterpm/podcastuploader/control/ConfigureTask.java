@@ -2,12 +2,12 @@
  * Copyright 2012 Jesse Morgan
  */
 
-package net.jesterpm.sermonuploader.control;
+package net.jesterpm.podcastuploader.control;
 
-import net.jesterpm.sermonuploader.config.Config;
+import net.jesterpm.podcastuploader.config.Config;
 
-import net.jesterpm.sermonuploader.ui.Action;
-import net.jesterpm.sermonuploader.ui.ConfigurationWindow;
+import net.jesterpm.podcastuploader.ui.Action;
+import net.jesterpm.podcastuploader.ui.ConfigurationWindow;
 
 /**
  * Controller for the ConfigurationWindow.

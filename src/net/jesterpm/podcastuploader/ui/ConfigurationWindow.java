@@ -2,7 +2,7 @@
  * Copyright 2012 Jesse Morgan
  */
 
-package net.jesterpm.sermonuploader.ui;
+package net.jesterpm.podcastuploader.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +33,7 @@ public class ConfigurationWindow extends JFrame {
     private final JButton mSave;
 
     public ConfigurationWindow() {
-        super("Sermon Uploader Configuration");
+        super("Podcast Uploader Configuration");
 
         JPanel panel = new JPanel();
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
