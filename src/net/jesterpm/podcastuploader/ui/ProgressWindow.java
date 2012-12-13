@@ -8,6 +8,6 @@ package net.jesterpm.podcastuploader.ui;
  * 
  * @author Jesse Morgan <jesse@jesterpm.net>
  */
-public class ProgressWindow {
+public class ProgressWindow extends ProgressInterface {
      
 }

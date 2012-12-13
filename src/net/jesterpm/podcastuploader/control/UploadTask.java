@@ -26,7 +26,7 @@ public class UploadTask {
     /**
      * Progress window.
      */
-    private final ProgressWindow mProgressWindow;
+    private final ProgressInterface mProgressInterface;
 
     /**
      * Application config.
@@ -44,8 +44,10 @@ public class UploadTask {
      * @param win The progress window user interface.
      * @param dir The directory to upload.
      */
-    public UploadTask(final Config appconfig, final ProgressWindow win, final String dir) {
-        mProgressWindow = win;
+    public UploadTask(final Config appconfig, final ProgressInterface progressInterface,
+           final String dir) {
+
+        mProgressInterface = progressInterface;
         mAppConfig = appconfig;
 
         mMetadata = new Config(dir + METADATA_FILE);
@@ -78,8 +80,85 @@ public class UploadTask {
         fmt = new SimpleDateFormat("yyyyMMdd");
         final String baseFilename = fmt.format(date) + "-" 
             + safeString(mMetadata.get("title"));
+
+        // Build a list of files to upload.
+        Map<String, S3UploadTask> files = getFilesToUpload(baseFilename);
+        // TODO: Execute all the upload tasks (in parallel?)
+
+        // Publish the podcast metadata.
+        Map<String, String> metadata = mMetadata.getMap().clone();
+
+        for (Map.Entry<String, S3UploadTask> entry : files) {
+            metadata.put(entry.getKey(), entry.getValue().getRemoteFile());
+        }
+
+        PublishPodcastTask task = new PublishPodcastTask(mAppConfig, metadata);
+        task.run();
     }
 
+    /**
+     * Build the list of S3UploadTasks to execute.
+     */
+    private Map<String, S3UploadTask> getFilesToUpload(final String basename) {
+        Map<String, S3UploadTask> files = new HashMap<String, S3UploadTask>();
+
+        String localFile;
+        String remoteFile;
+
+        localFile = mMetadata.get("video");
+        if (localFile != null) {
+            remoteFile = basename + "-video" + fileExtension(localFile);
+            files.put("video", new S3UploadTask(mAppConfig, localFile, remoteFile);
+        }
+
+        localFile = mMetadata.get("video_lowres");
+        if (localFile != null) {
+            remoteFile = basename + "-videolow" + fileExtension(localFile);
+            files.put("video_lowres", new S3UploadTask(mAppConfig, localFile, remoteFile);
+        }
+
+        localFile = mMetadata.get("audio");
+        if (localFile != null) {
+            remoteFile = basename + "-audio" + fileExtension(localFile);
+            files.put("audio", new S3UploadTask(mAppConfig, localFile, remoteFile);
+        }
+ 
+        localFile = mMetadata.get("image");
+        if (localFile != null) {
+            remoteFile = basename + "-image" + fileExtension(localFile);
+            files.add("image", new S3UploadTask(mAppConfig, localFile, remoteFile);
+        }
+
+        localFile = mMetadata.get("mobileimage");
+        if (localFile != null) {
+            remoteFile = basename + "-mobileimage" + fileExtension(localFile);
+            files.add("mobileimage", new S3UploadTask(mAppConfig, localFile, remoteFile);
+        }
+
+        return files;
+    }
+
+    /**
+     * @return the extension from the given filename.
+     */
+    private String fileExtension(final String file) {
+        int pos = file.lastIndexOf('.');
+ 
+        if (pos == -1) {
+            return "";
+
+        } else {
+            return file.substring(pos);
+        }
+    }
+
+    /**
+     * Transform str into a URL safe string by substituting spaces with dashes
+     * and dropping all other non-alphanumeric characters.
+     *
+     * @param str The String to transform.
+     * @return The transformed string.
+     */
     private String safeString(String str) {
         char[] newStr = str.trim().toLowerCase().toCharArray();
         boolean firstSpace = true;
