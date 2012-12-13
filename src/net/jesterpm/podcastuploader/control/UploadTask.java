@@ -39,6 +39,11 @@ public class UploadTask {
     private final Config mMetadata;
 
     /**
+     * Thread Pool used for and by the UploadTasks.
+     */
+    private final ThreadPoolExecutor mExecutor;
+
+    /**
      * UploadTask Constructor.
      * @param appconfig The application config
      * @param win The progress window user interface.
@@ -83,7 +88,12 @@ public class UploadTask {
 
         // Build a list of files to upload.
         Map<String, S3UploadTask> files = getFilesToUpload(baseFilename);
-        // TODO: Execute all the upload tasks (in parallel?)
+        for (S3UploadTask task : files.getEntries()) {
+            mExecutor.submit(task);
+            mProgressInterface.monitorTask(task);
+        }
+
+        // Wait until all uploads complete.
 
         // Publish the podcast metadata.
         Map<String, String> metadata = mMetadata.getMap().clone();
@@ -108,31 +118,36 @@ public class UploadTask {
         localFile = mMetadata.get("video");
         if (localFile != null) {
             remoteFile = basename + "-video" + fileExtension(localFile);
-            files.put("video", new S3UploadTask(mAppConfig, localFile, remoteFile);
+            files.put("video", new S3UploadTask(mAppConfig, localFile, 
+                        remoteFile, mExecutor);
         }
 
         localFile = mMetadata.get("video_lowres");
         if (localFile != null) {
             remoteFile = basename + "-videolow" + fileExtension(localFile);
-            files.put("video_lowres", new S3UploadTask(mAppConfig, localFile, remoteFile);
+            files.put("video_lowres", new S3UploadTask(mAppConfig, localFile,
+                    remoteFile, mExecutor);
         }
 
         localFile = mMetadata.get("audio");
         if (localFile != null) {
             remoteFile = basename + "-audio" + fileExtension(localFile);
-            files.put("audio", new S3UploadTask(mAppConfig, localFile, remoteFile);
+            files.put("audio", new S3UploadTask(mAppConfig, localFile,
+                    remoteFile, mExecutor);
         }
  
         localFile = mMetadata.get("image");
         if (localFile != null) {
             remoteFile = basename + "-image" + fileExtension(localFile);
-            files.add("image", new S3UploadTask(mAppConfig, localFile, remoteFile);
+            files.add("image", new S3UploadTask(mAppConfig, localFile, 
+                    remoteFile, mExecutor);
         }
 
         localFile = mMetadata.get("mobileimage");
         if (localFile != null) {
             remoteFile = basename + "-mobileimage" + fileExtension(localFile);
-            files.add("mobileimage", new S3UploadTask(mAppConfig, localFile, remoteFile);
+            files.add("mobileimage", new S3UploadTask(mAppConfig, localFile,
+                    remoteFile, mExecutor);
         }
 
         return files;
