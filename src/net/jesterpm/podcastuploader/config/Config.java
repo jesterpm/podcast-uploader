@@ -130,4 +130,8 @@ public class Config {
     public void put(final String key, final String obj) {
         mConfig.put(key, obj);
     }
+
+    public Map<String, String> getMap() {
+        return mConfig;
+    }
 }

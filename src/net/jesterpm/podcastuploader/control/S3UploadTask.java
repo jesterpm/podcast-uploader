@@ -4,6 +4,9 @@
 
 package net.jesterpm.podcastuploader.control;
 
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client; 
+
 import java.util.concurrent.ThreadPoolExecutor;
 
 import net.jesterpm.podcastuploader.config.Config;
@@ -13,7 +16,7 @@ import net.jesterpm.podcastuploader.config.Config;
  *
  * @author Jesse Morgan <jesse@jesterpm.net>
  */
-public class S3UploadTask extends ObserableTask implements Runable {
+public class S3UploadTask extends ObservableTask implements Runnable {
     private final ThreadPoolExecutor mExecutor;
 
     private final AmazonS3Client mClient;
@@ -71,6 +74,13 @@ public class S3UploadTask extends ObserableTask implements Runable {
      */
     @Override
     public float getProgress() {
-        return (float) mCurrentChunk / mTotalChunks.
+        return (float) mCurrentChunk / mTotalChunks;
+    }
+
+    /**
+     * @return The S3 key this object uploads to.
+     */
+    public String getS3Key() {
+        return mS3Key;
     }
 }

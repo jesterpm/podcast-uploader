@@ -7,8 +7,9 @@ package net.jesterpm.podcastuploader.ui;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
+import java.util.Observable;
 
-import net.jesterpm.podcastuploader.control.ObserableTask;
+import net.jesterpm.podcastuploader.control.ObservableTask;
 
 /**
  * ProgressInterface is an abstract based class for any interface that
@@ -34,7 +35,7 @@ public abstract class ProgressInterface implements Observer {
      */
     public void monitorTask(final ObservableTask task) {
         task.addObserver(this);
-        mProgressMap.put(task, 0);
+        mProgressMap.put(task, 0f);
         setProgress(getProgress());
     }
 
@@ -53,7 +54,8 @@ public abstract class ProgressInterface implements Observer {
      */
     @Override
     public void update(Observable task, Object arg) {
-        mProgressMap.put(task, task.getProgress());
+        ObservableTask observableTask = (ObservableTask) task;
+        mProgressMap.put(observableTask, observableTask.getProgress());
         setProgress(getProgress());
     }
 
@@ -67,7 +69,7 @@ public abstract class ProgressInterface implements Observer {
         }
 
         float totalProgress = 0;
-        for (float taskProgress : mProgressMap.getValues()) {
+        for (float taskProgress : mProgressMap.values()) {
             totalProgress += taskProgress;
         }
 

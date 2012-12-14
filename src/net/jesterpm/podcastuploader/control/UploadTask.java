@@ -7,10 +7,13 @@ package net.jesterpm.podcastuploader.control;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.jesterpm.podcastuploader.config.Config;
-import net.jesterpm.podcastuploader.ui.ProgressWindow;
+import net.jesterpm.podcastuploader.ui.ProgressInterface;
 
 /**
  * 
@@ -88,7 +91,7 @@ public class UploadTask {
 
         // Build a list of files to upload.
         Map<String, S3UploadTask> files = getFilesToUpload(baseFilename);
-        for (S3UploadTask task : files.getEntries()) {
+        for (S3UploadTask task : files.values()) {
             mExecutor.submit(task);
             mProgressInterface.monitorTask(task);
         }
@@ -96,10 +99,10 @@ public class UploadTask {
         // Wait until all uploads complete.
 
         // Publish the podcast metadata.
-        Map<String, String> metadata = mMetadata.getMap().clone();
+        Map<String, String> metadata = new HashMap<String, String>(mMetadata.getMap());
 
-        for (Map.Entry<String, S3UploadTask> entry : files) {
-            metadata.put(entry.getKey(), entry.getValue().getRemoteFile());
+        for (Map.Entry<String, S3UploadTask> entry : files.entrySet()) {
+            metadata.put(entry.getKey(), entry.getValue().getS3Key());
         }
 
         PublishPodcastTask task = new PublishPodcastTask(mAppConfig, metadata);
@@ -119,35 +122,35 @@ public class UploadTask {
         if (localFile != null) {
             remoteFile = basename + "-video" + fileExtension(localFile);
             files.put("video", new S3UploadTask(mAppConfig, localFile, 
-                        remoteFile, mExecutor);
+                        remoteFile, mExecutor));
         }
 
         localFile = mMetadata.get("video_lowres");
         if (localFile != null) {
             remoteFile = basename + "-videolow" + fileExtension(localFile);
             files.put("video_lowres", new S3UploadTask(mAppConfig, localFile,
-                    remoteFile, mExecutor);
+                    remoteFile, mExecutor));
         }
 
         localFile = mMetadata.get("audio");
         if (localFile != null) {
             remoteFile = basename + "-audio" + fileExtension(localFile);
             files.put("audio", new S3UploadTask(mAppConfig, localFile,
-                    remoteFile, mExecutor);
+                    remoteFile, mExecutor));
         }
  
         localFile = mMetadata.get("image");
         if (localFile != null) {
             remoteFile = basename + "-image" + fileExtension(localFile);
-            files.add("image", new S3UploadTask(mAppConfig, localFile, 
-                    remoteFile, mExecutor);
+            files.put("image", new S3UploadTask(mAppConfig, localFile, 
+                    remoteFile, mExecutor));
         }
 
         localFile = mMetadata.get("mobileimage");
         if (localFile != null) {
             remoteFile = basename + "-mobileimage" + fileExtension(localFile);
-            files.add("mobileimage", new S3UploadTask(mAppConfig, localFile,
-                    remoteFile, mExecutor);
+            files.put("mobileimage", new S3UploadTask(mAppConfig, localFile,
+                    remoteFile, mExecutor));
         }
 
         return files;
