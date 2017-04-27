@@ -5,9 +5,11 @@
 package net.jesterpm.podcastuploader.control;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +46,7 @@ public class UploadTask {
     /**
      * Thread Pool used for and by the UploadTasks.
      */
-    private final ThreadPoolExecutor mExecutor;
+    private final ExecutorService mExecutor;
 
     /**
      * UploadTask Constructor.
@@ -59,6 +61,8 @@ public class UploadTask {
         mAppConfig = appconfig;
 
         mMetadata = new Config(dir + METADATA_FILE);
+
+        mExecutor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -82,12 +86,18 @@ public class UploadTask {
      * to upload.
      */
     public void run() {
-        DateFormat fmt = DateFormat.getDateInstance(DateFormat.SHORT);
-        final Date date = fmt.parse(mMetadata.get("date"));
+        final String baseFilename;
 
-        fmt = new SimpleDateFormat("yyyyMMdd");
-        final String baseFilename = fmt.format(date) + "-" 
-            + safeString(mMetadata.get("title"));
+        try {
+            DateFormat fmt = DateFormat.getDateInstance(DateFormat.SHORT);
+            final Date date = fmt.parse(mMetadata.get("date"));
+
+            fmt = new SimpleDateFormat("yyyyMMdd");
+            baseFilename = fmt.format(date) + "-" + safeString(mMetadata.get("title"));
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         // Build a list of files to upload.
         Map<String, S3UploadTask> files = getFilesToUpload(baseFilename);

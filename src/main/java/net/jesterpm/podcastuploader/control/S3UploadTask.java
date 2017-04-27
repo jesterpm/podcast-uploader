@@ -7,7 +7,7 @@ package net.jesterpm.podcastuploader.control;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client; 
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 import net.jesterpm.podcastuploader.config.Config;
 
@@ -17,7 +17,7 @@ import net.jesterpm.podcastuploader.config.Config;
  * @author Jesse Morgan <jesse@jesterpm.net>
  */
 public class S3UploadTask extends ObservableTask implements Runnable {
-    private final ThreadPoolExecutor mExecutor;
+    private final ExecutorService mExecutor;
 
     private final AmazonS3Client mClient;
     
@@ -36,7 +36,7 @@ public class S3UploadTask extends ObservableTask implements Runnable {
      * @param remoteFile The key to use for the file in S3.
      */
     public S3UploadTask(final Config appConfig, final String localFile,
-           final String remoteFile, final ThreadPoolExecutor executor) {
+           final String remoteFile, final ExecutorService executor) {
 
         mExecutor = executor;
 
