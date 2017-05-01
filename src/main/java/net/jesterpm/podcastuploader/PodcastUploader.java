@@ -4,11 +4,11 @@
 
 package net.jesterpm.podcastuploader;
 
-import net.jesterpm.podcastuploader.config.Config;
-import net.jesterpm.podcastuploader.control.ConfigureTask;
-import net.jesterpm.podcastuploader.control.UploadTask;
-import net.jesterpm.podcastuploader.ui.ConfigurationWindow;
-import net.jesterpm.podcastuploader.ui.ProgressWindow;
+import net.jesterpm.podcastuploader.model.Config;
+import net.jesterpm.podcastuploader.control.MetadataTask;
+import net.jesterpm.podcastuploader.ui.GUIFactory;
+
+import java.io.*;
 
 /**
  * Application entry-point.
@@ -20,45 +20,18 @@ public class PodcastUploader {
         + System.getProperty("file.separator") + ".podcastuploader";
 
     public static void main(String... args) {
-        final Config appconfig = new Config(DEFAULT_CONFIG);
-
-        if (args.length == 0) {
-            startConfigure(appconfig);
-
-        } else {
-            if (args[0].equals("--help")) {
-                printHelp();
-            }
-
-            startUpload(appconfig, args[0]);
+        // Load the configuration.
+        final Config config;
+        try {
+            config = new Config(DEFAULT_CONFIG);
+        } catch (IOException e) {
+            System.err.println("Exception loading config! " + e.getMessage());
+            System.exit(1);
+            return;
         }
-    } 
 
-    private static void printHelp() {
-        System.out.println("PodcastUploader - Podcast upload utility.");
-        System.out.println("Created by Jesse Morgan <jesse@jesterpm.net>");
-        System.out.println("http://jesterpm.net/projects/podcastuploader");
-        System.out.println();
-        System.out.println("Usage: PodcastUploader [directory]");
-        System.out.println(
-                "When started with no arguments, the configuration dialog is opened.");
-        System.out.println(
-                "When started with one argument, it is assumed to be a directory\n"
-                + "with a metadata.txt file with upload instructions."); 
-        System.out.println();
-    }
-
-    private static void startConfigure(final Config appconfig) {
-        ConfigurationWindow win = new ConfigurationWindow();
-        ConfigureTask task = new ConfigureTask(appconfig, win);
-
-        task.run();
-    }
-
-    public static void startUpload(final Config appconfig, final String dir) {
-        ProgressWindow win = new ProgressWindow();
-        UploadTask task = new UploadTask(appconfig, win, dir);
-
-        task.run();
+        GUIFactory uiFactory = new GUIFactory();
+        MetadataTask task = new MetadataTask(config, uiFactory);
+        task.run(() -> System.exit(0));
     }
 }

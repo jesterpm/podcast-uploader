@@ -6,7 +6,7 @@ package net.jesterpm.podcastuploader.control;
 
 import java.util.Map;
 
-import net.jesterpm.podcastuploader.config.Config;
+import net.jesterpm.podcastuploader.model.Config;
 
 /**
  * Task to publish podcast meta-data to a server.

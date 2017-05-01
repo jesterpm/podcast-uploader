@@ -28,8 +28,6 @@ public class ConfigurationWindow extends JFrame {
     private final JTextField mAWSKey;
     private final JTextField mAWSSecret;
     private final JTextField mS3Bucket;
-    private final JTextField mMetadataServer;
-    private final JButton mAuthorize;
     private final JButton mSave;
 
     public ConfigurationWindow() {
@@ -43,8 +41,6 @@ public class ConfigurationWindow extends JFrame {
         mAWSKey = new JTextField();
         mAWSSecret = new JTextField();
         mS3Bucket = new JTextField();
-        mMetadataServer = new JTextField();
-        mAuthorize = new JButton("Authorize App");
         mSave = new JButton("Save");
         mSave.setDefaultCapable(true);
 
@@ -59,9 +55,6 @@ public class ConfigurationWindow extends JFrame {
         fieldConstraint.fill = GridBagConstraints.HORIZONTAL;
         fieldConstraint.weightx = 1;
 
-        panel.add(new JLabel("Podcast Server:", JLabel.RIGHT), labelConstraint);
-        panel.add(mMetadataServer, fieldConstraint);
-
         panel.add(new JLabel("AWS Access Key:", JLabel.RIGHT), labelConstraint);
         panel.add(mAWSKey, fieldConstraint);
         
@@ -72,11 +65,6 @@ public class ConfigurationWindow extends JFrame {
         panel.add(mS3Bucket, fieldConstraint);
 
         GridBagConstraints buttonConstraint = new GridBagConstraints();
-        buttonConstraint.gridy = 5;
-        buttonConstraint.gridwidth = 2;
-        buttonConstraint.weighty = 1;
-        panel.add(mAuthorize, buttonConstraint);
-
         buttonConstraint.gridx = 1;
         buttonConstraint.gridy = 7;
         buttonConstraint.gridwidth = 1;
@@ -114,37 +102,8 @@ public class ConfigurationWindow extends JFrame {
         return mS3Bucket.getText();
     }
 
-    public void setMetadataServer(final String value) {
-        mMetadataServer.setText(value);
-    }
-
-    public String getMetadataServer() {
-        return mMetadataServer.getText();
-    }
-
-    public void setHasAuthKey(final boolean value) {
-        if (value) {
-            mAuthorize.setText("Reauthorize App");
-        
-        } else {
-            mAuthorize.setText("Authorize App");
-        }
-    }
-
-    public void addAuthorizeAction(final Action a) {
-        mAuthorize.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                a.onAction();
-            }
-        });
-    }
-    
     public void addSaveAction(final Action a) {
-        mSave.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                a.onAction();
-            }
-        });
+        mSave.addActionListener(e -> a.onAction());
     }
 
     public void addCancelAction(final Action a) {

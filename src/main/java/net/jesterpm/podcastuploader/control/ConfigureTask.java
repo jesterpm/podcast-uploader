@@ -4,10 +4,12 @@
 
 package net.jesterpm.podcastuploader.control;
 
-import net.jesterpm.podcastuploader.config.Config;
+import net.jesterpm.podcastuploader.model.Config;
 
-import net.jesterpm.podcastuploader.ui.Action;
 import net.jesterpm.podcastuploader.ui.ConfigurationWindow;
+import net.jesterpm.podcastuploader.ui.UIFactory;
+
+import java.io.IOException;
 
 /**
  * Controller for the ConfigurationWindow.
@@ -15,35 +17,24 @@ import net.jesterpm.podcastuploader.ui.ConfigurationWindow;
  * @author Jesse Morgan <jesse@jesterpm.net>
  */
 public class ConfigureTask {
-    private final Config mAppConfig;
+    private final Config mConfig;
     private final ConfigurationWindow mWin;
 
-    public ConfigureTask(final Config appconfig, final ConfigurationWindow win) {
-        mAppConfig = appconfig;
-        mWin = win;
+    public ConfigureTask(final Config config, final UIFactory uiFactory) {
+        mConfig = config;
+        mWin = uiFactory.createConfigurationWindow();
 
-        mWin.addSaveAction(new Action() {
-            public void onAction() {
+        mWin.addSaveAction(() -> {
+            try {
                 populateConfig();
-                mAppConfig.save();
-                mWin.setVisible(false);
-                System.exit(0);
+                mConfig.save();
+            } catch (IOException e) {
+                // TODO
             }
+            mWin.setVisible(false);
         });
 
-        mWin.addCancelAction(new Action() {
-            public void onAction() {
-                mWin.setVisible(false);
-                System.exit(0);
-            }
-        });
-
-        mWin.addAuthorizeAction(new Action() {
-            public void onAction() {
-                populateConfig();
-                getAuthorization();
-            }
-        });
+        mWin.addCancelAction(() -> mWin.setVisible(false));
 
         populateWindow();
     }  
@@ -52,21 +43,18 @@ public class ConfigureTask {
      * Set the fields in the configuration window.
      */
     private void populateWindow() {
-        mWin.setAWSKey(mAppConfig.get("AWSAccessKeyId"));
-        mWin.setAWSSecret(mAppConfig.get("AWSSecretKey"));
-        mWin.setS3Bucket(mAppConfig.get("S3Bucket"));
-        mWin.setMetadataServer(mAppConfig.get("MetadataURL"));
-        mWin.setHasAuthKey(mAppConfig.get("MetadataAuthKey") != null);
+        mWin.setAWSKey(mConfig.getProperty("AWSAccessKeyId"));
+        mWin.setAWSSecret(mConfig.getProperty("AWSSecretKey"));
+        mWin.setS3Bucket(mConfig.getProperty("S3Bucket"));
     }
 
     /**
      * Populate the config from the window.
      */
     private void populateConfig() {
-        mAppConfig.put("AWSAccessKeyId", mWin.getAWSKey());
-        mAppConfig.put("AWSSecretKey", mWin.getAWSSecret());
-        mAppConfig.put("S3Bucket", mWin.getS3Bucket());
-        mAppConfig.put("MetadataURL", mWin.getMetadataServer());
+        mConfig.put("AWSAccessKeyId", mWin.getAWSKey());
+        mConfig.put("AWSSecretKey", mWin.getAWSSecret());
+        mConfig.put("S3Bucket", mWin.getS3Bucket());
     }
 
     /**
@@ -74,12 +62,5 @@ public class ConfigureTask {
      */
     public void run() {
         mWin.setVisible(true);
-    }
-
-    /**
-     * Get an authorization token from the metadata service.
-     */
-    private void getAuthorization() {
-
     }
 }

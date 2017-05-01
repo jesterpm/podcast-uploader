@@ -9,7 +9,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.util.concurrent.ExecutorService;
 
-import net.jesterpm.podcastuploader.config.Config;
+import net.jesterpm.podcastuploader.model.Config;
 
 /**
  * Task for uploading a single file to S3.
@@ -41,9 +41,9 @@ public class S3UploadTask extends ObservableTask implements Runnable {
         mExecutor = executor;
 
         mClient = new AmazonS3Client(new BasicAWSCredentials(
-                    appConfig.get("AWSAccessKeyId"), appConfig.get("AWSSecretKey")));
+                    appConfig.getProperty("AWSAccessKeyId"), appConfig.getProperty("AWSSecretKey")));
 
-        mBucket = appConfig.get("S3Bucket");
+        mBucket = appConfig.getProperty("S3Bucket");
         mLocalFile = localFile;
         mS3Key = remoteFile;
 

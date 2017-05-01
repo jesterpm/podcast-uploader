@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Jesse Morgan
+ * Copyright 2012-2017 Jesse Morgan <jesse@jesterpm.net>
  */
 
 package net.jesterpm.podcastuploader.ui;
@@ -9,9 +9,10 @@ package net.jesterpm.podcastuploader.ui;
  *
  * @author Jesse Morgan <jesse@jesterpm.net>
  */
+@FunctionalInterface
 public interface Action {
     /**
      * This method is called when the action is performed.
      */
-    public void onAction();
+    void onAction();
 }
